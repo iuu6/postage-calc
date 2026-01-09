@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>邮票计算器</title>
+<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+<div class="card">
+<h2>可用邮票</h2>
+<ul class="stamp-list" id="stampList"></ul>
+</div>
+
+<div class="card">
+<h2>添加自定义邮票</h2>
+<div class="input-group">
+<label>面值</label>
+<input type="number" id="customValue" step="0.1" placeholder="例如: 1.5">
+</div>
+<div class="input-group">
+<label>张数 (-1为无限)</label>
+<input type="number" id="customCount" placeholder="例如: 10">
+</div>
+<button onclick="addCustomStamp()">添加</button>
+<button onclick="resetStamps()">重置</button>
+</div>
+
+<div class="card">
+<h2>计算邮资</h2>
+<div class="input-group">
+<label>需要凑的金额</label>
+<input type="number" id="targetAmount" step="0.1" placeholder="例如: 4.2">
+</div>
+<button onclick="calculate()">计算</button>
+<div id="result"></div>
+</div>
+
+<script src="static/app.js"></script>
+</body>
+</html>

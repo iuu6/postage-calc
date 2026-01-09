@@ -1,0 +1,6 @@
+[
+  {"value": 1.5, "count": 10},
+  {"value": 1.2, "count": 5},
+  {"value": 1.0, "count": -1},
+  {"value": 0.8, "count": 20}
+]

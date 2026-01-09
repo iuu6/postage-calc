@@ -58,11 +58,15 @@ function findBestCombination(target){
 const sorted=[...stamps].sort((a,b)=>b.value-a.value);
 let best=null;
 let minStamps=Infinity;
+let minDiff=Infinity;
 
 function dfs(idx,remain,used,total){
+const sum=target-remain;
 if(remain<=0){
-if(total<=minStamps){
+const diff=sum-target;
+if(total<minStamps||(total===minStamps&&diff<minDiff)){
 minStamps=total;
+minDiff=diff;
 best=used.map((u,i)=>({value:sorted[i].value,used:u}));
 }
 return;

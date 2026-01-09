@@ -44,45 +44,44 @@ loadStamps();
 function calculate(){
 const target=parseFloat(document.getElementById('targetAmount').value);
 if(!target)return alert('请输入金额');
-const result=findBestCombination(target);
+const results=findBestCombinations(target);
 const div=document.getElementById('result');
-if(result){
-const total=result.reduce((sum,r)=>sum+r.value*r.used,0).toFixed(1);
-div.innerHTML=`<div class="result"><div class="result-item"><strong>最优方案 (总计: ${total}):</strong></div>${result.map(r=>r.used?`<div class="result-item">${r.value} × ${r.used}</div>`:'').join('')}</div>`;
+if(results.length){
+div.innerHTML=results.map((r,i)=>{
+const total=r.stamps.reduce((sum,s)=>sum+s.value*s.used,0).toFixed(1);
+const items=r.stamps.filter(s=>s.used).map(s=>`${s.value} × ${s.used}`).join(' + ');
+return `<div class="result"><div class="result-item"><strong>方案${i+1} (总计: ${total}, ${r.count}张):</strong></div><div class="result-item">${items}</div></div>`;
+}).join('');
 }else{
 div.innerHTML='<div class="result error">无法凑齐</div>';
 }
 }
 
-function findBestCombination(target){
-const sorted=[...stamps].sort((a,b)=>b.value-a.value);
-let best=null;
-let minStamps=Infinity;
-let minDiff=Infinity;
+function findBestCombinations(target){
+const solutions=[];
+const maxDiff=Math.max(...stamps.map(s=>s.value));
 
-function dfs(idx,remain,used,total){
-const sum=target-remain;
-if(remain<=0){
+function dfs(idx,sum,used,count){
+if(sum>=target){
 const diff=sum-target;
-if(total<minStamps||(total===minStamps&&diff<minDiff)){
-minStamps=total;
-minDiff=diff;
-best=used.map((u,i)=>({value:sorted[i].value,used:u}));
+if(diff<=maxDiff){
+solutions.push({stamps:used.map((u,i)=>({value:stamps[i].value,used:u})),sum,count,diff});
 }
 return;
 }
-if(idx>=sorted.length||total>=minStamps)return;
-const s=sorted[idx];
-const max=s.count===-1?Math.ceil(remain/s.value)+1:Math.min(s.count,Math.ceil(remain/s.value)+1);
-for(let i=max;i>=0;i--){
+if(idx>=stamps.length)return;
+const s=stamps[idx];
+const maxUse=s.count===-1?Math.ceil((target+maxDiff-sum)/s.value):Math.min(s.count,Math.ceil((target+maxDiff-sum)/s.value));
+for(let i=0;i<=maxUse;i++){
 used[idx]=i;
-dfs(idx+1,remain-s.value*i,used,total+i);
+dfs(idx+1,sum+s.value*i,used,count+i);
 }
 used[idx]=0;
 }
 
-dfs(0,target,Array(sorted.length).fill(0),0);
-return best;
+dfs(0,0,Array(stamps.length).fill(0),0);
+solutions.sort((a,b)=>a.diff-b.diff||a.count-b.count);
+return solutions.slice(0,5);
 }
 
 loadStamps();
